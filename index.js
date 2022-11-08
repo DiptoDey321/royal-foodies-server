@@ -14,7 +14,26 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.1ybdqfv.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+async function run(){
+    try {
+      const serviceCollection = client.db("royalFoodies").collection("services");
+  
+      app.get('/servicesForHome', async (req, res) => {
+        const query = {}
+        const cursor = serviceCollection.find(query);
+        const services = await cursor.limit(3).toArray();
+        res.send(services);
+    });
+  
+    } finally {
+      
+    }
+  }
+  run().catch(err => console.log(err))
+  
+  app.get('/', (req, res) => {
+    res.send('Royal foodies server is running!')
+  })
   
   
   app.listen(port, () => {
