@@ -26,7 +26,12 @@ async function run(){
         res.send(comment);
       })
 
-     
+      app.get('/comments',async(req, res)=>{
+        const query = {};
+        const cursor = commenteCollection.find(query);
+        const comments = await cursor.toArray();
+        res.send(comments)
+      })
 
       // get 3 of services 
       app.get('/servicesForHome', async (req, res) => {
