@@ -26,11 +26,22 @@ async function run(){
         res.send(comment);
       })
 
+      // get all comments 
       app.get('/comments',async(req, res)=>{
         const query = {};
         const cursor = commenteCollection.find(query);
         const comments = await cursor.toArray();
         res.send(comments)
+      })
+
+       // delete the specific id's product from the mongoDB 
+       app.delete('/comments/:id',async(req,res)=>{
+        const id = req.params.id
+        const query = {_id:ObjectId(id)}
+        // console.log("trying to dlt", id);
+        const result = await commenteCollection.deleteOne(query);
+        console.log(result);
+        res.send(result)
       })
 
       // get 3 of services 
