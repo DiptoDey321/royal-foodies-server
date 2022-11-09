@@ -17,19 +17,34 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try {
       const serviceCollection = client.db("royalFoodies").collection("services");
+      const commenteCollection = client.db("royalFoodies").collection("comments");
   
+      // post comments to mongodb or add data to mongoDB 
+      app.post('/comments',async(req, res)=>{
+        const comment = req.body;
+        const result = await commenteCollection.insertOne(comment);
+        res.send(comment);
+      })
+
+     
+
+      // get 3 of services 
       app.get('/servicesForHome', async (req, res) => {
         const query = {}
         const cursor = serviceCollection.find(query);
         const services = await cursor.limit(3).toArray();
         res.send(services);
       });
+
+      // get all services 
       app.get('/allServices', async (req, res) => {
         const query = {}
         const cursor = serviceCollection.find(query);
         const services = await cursor.toArray();
         res.send(services);
       });
+
+      // get perticular services 
       app.get('/service-details/:id', async (req, res) => {
         const id = req.params.id;
         console.log(id);
