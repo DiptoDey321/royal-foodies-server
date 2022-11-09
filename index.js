@@ -18,6 +18,14 @@ async function run(){
     try {
       const serviceCollection = client.db("royalFoodies").collection("services");
       const commenteCollection = client.db("royalFoodies").collection("comments");
+
+      // get the product depend on the id for showing them in update page 
+      app.get('/comments/:id',async(req, res) => {
+        const id = req.params.id
+        const query = {_id:ObjectId(id)}
+        const product = await commenteCollection.findOne(query);
+        res.send(product)
+      })
   
       // post comments to mongodb or add data to mongoDB 
       app.post('/comments',async(req, res)=>{
@@ -34,7 +42,7 @@ async function run(){
         res.send(comments)
       })
 
-       // delete the specific id's product from the mongoDB 
+       // delete the specific id's comment from the mongoDB 
        app.delete('/comments/:id',async(req,res)=>{
         const id = req.params.id
         const query = {_id:ObjectId(id)}
