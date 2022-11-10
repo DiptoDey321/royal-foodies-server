@@ -35,7 +35,59 @@ async function run(){
         res.send({token})
       })
 
-     
+      //update product
+      app.put('/comments/:id', async(req,res)=>{
+        const id = req.params.id
+        const filter = {_id:ObjectId(id)}
+        const review = req.body;
+        const option = {upsert : true}
+        const updatedReview = {
+          $set :{
+            comment : review.comment,
+            serviceId : review.serviceId,
+            userEmail : review.userEmail,
+            userPhoto : review.userPhoto,
+            serviceName : review.serviceName,
+          }
+          
+        }
+        const result = await commenteCollection.updateOne(filter,updatedReview,option);
+        res.send(result)
+    })
+
+      // get the product depend on the id for showing them in update page 
+      app.get('/comments/:id',async(req, res) => {
+        const id = req.params.id
+        const query = {_id:ObjectId(id)}
+        const product = await commenteCollection.findOne(query);
+        res.send(product)
+      })
+  
+      // post comments to mongodb or add data to mongoDB 
+      app.post('/comments',async(req, res)=>{
+        const comment = req.body;
+        const result = await commenteCollection.insertOne(comment);
+        res.send(comment);
+      })
+
+      // verifing JWT for reviewing page
+      app.get('/comments',verifyJWT, async(req, res)=>{
+        // console.log(req.headers.authorization);
+        const query = {};
+        const cursor = commenteCollection.find(query).sort({_id:-1})
+        const comments = await cursor.toArray();
+        res.send(comments)
+       
+      })
+
+      // fetch all the comments 
+      app.get('/allcomments', async(req, res)=>{
+        const query = {};
+        const cursor = commenteCollection.find(query).sort({_id:-1})
+        const comments = await cursor.toArray();
+        res.send(comments)
+       
+      })
 
        // delete the specific id's comment from the mongoDB 
        app.delete('/comments/:id',async(req,res)=>{
